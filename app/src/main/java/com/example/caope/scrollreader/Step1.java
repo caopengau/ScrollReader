@@ -24,7 +24,7 @@ import static com.example.caope.scrollreader.R.mipmap.ic_launcher;
 public class Step1 extends AppCompatActivity {
     private String filename;
     private ImageView imageView;
-    private  String SAVE_PIC_PATH  = Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/mnt/sdcard";//保存到SD卡
+    private  String SAVE_PIC_PATH  = Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/mnt/sdcard";
     private static final int CAMERA_REQUEST = 1888;
     private static final int GALLERY_REQUEST = 1889;
 
@@ -66,7 +66,7 @@ public class Step1 extends AppCompatActivity {
         }else if(requestCode==CAMERA_REQUEST){
             bitmap = (Bitmap) data.getExtras().get("data");
             try {
-                saveToSDCard(bitmap);
+                saveToLocal(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -78,26 +78,7 @@ public class Step1 extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri uri = Uri.fromFile(file);
         intent.setData(uri);
-        this.sendBroadcast(intent);//这个广播的目的就是更新图库，发了这个广播进入相册就可以找到你保存的图片了！，记得要传你更新的file哦
-    }
-
-    public void saveToSDCard(Bitmap bitmap) throws IOException {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(SAVE_PIC_PATH);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-
-            FileOutputStream outputStream;
-            createPhotoName();
-            File myCaptureFile = new File(SAVE_PIC_PATH, filename);
-            outputStream = new FileOutputStream(myCaptureFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);//把图片数据写入文件
-            outputStream.flush(); outputStream.close();
-            refreshGallery(myCaptureFile);
-        }else {
-            Toast.makeText(this,"no SD-card",Toast.LENGTH_SHORT).show();
-        }
+        this.sendBroadcast(intent);// update gallery for new file
     }
 
     public void createPhotoName(){
@@ -106,6 +87,21 @@ public class Step1 extends AppCompatActivity {
         filename = format.format(date)+".jpg";
 
     }
+
+    public void saveToLocal(Bitmap bitmap) throws IOException {
+        File file = new File(SAVE_PIC_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        createPhotoName();
+        File myCaptureFile = new File(SAVE_PIC_PATH, filename);
+        FileOutputStream outputStream = new FileOutputStream(myCaptureFile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);//把图片数据写入文件
+        outputStream.flush(); outputStream.close();
+        refreshGallery(myCaptureFile);
+    }
+
     public void clearPhoto(View view){
         imageView.setImageResource(ic_launcher);
     }
@@ -121,7 +117,6 @@ public class Step1 extends AppCompatActivity {
         intent.putExtra("filename", SAVE_PIC_PATH + "/" + filename);
         intent.setClass(this, Step2.class);
         this.startActivityForResult(intent, 1);
-
     }
 
     private void sendToServer(){

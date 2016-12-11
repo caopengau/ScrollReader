@@ -97,6 +97,7 @@ public class Step2 extends AppCompatActivity {
         command.setClass(this, Step3.class);
         this.startActivityForResult(command, 2);
     }
+
     public void sendToServer(){
 
     }
@@ -104,4 +105,5 @@ public class Step2 extends AppCompatActivity {
     public void back(View view){
         this.finish();
     }
+
 }
