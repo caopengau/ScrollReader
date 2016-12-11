@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ScrollReader</string>
+    <string name="Step1">Step 1: Input a scroll image</string>
+    <string name="Step2">Step 2: What result do you want</string>
+    <string name="Step3">Step 3: Result</string>
+    <string name="button1">Select a image</string>
+    <string name="button2">Take a photo</string>
+    <string name="button3_0">Clear</string>
+    <string name="button3_1">Back</string>
+    <string name="button4_0">Upload</string>
+    <string name="button4_1">Next</string>
+    <string name="checkbox1">Generate Digital Scroll</string>
+    <string name="checkbox2">Transcript Major Into</string>
+    <string name="checkbox3">Predict Notes</string>
+    <string name="buttonMore">More</string>
+</resources>
