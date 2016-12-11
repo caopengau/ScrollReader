@@ -85,58 +85,11 @@ public class Step2 extends AppCompatActivity {
         });
     }
 
-//    public  void translateDialog(View view){
-//        final List<String> list = new ArrayList<String>();
-//        final LinearLayout linearLayout1 = (LinearLayout)findViewById(R.id.linearLayout1);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        builder.setTitle("Notice");
-//        builder.setMultiChoiceItems(cities, null, new DialogInterface.OnMultiChoiceClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-//                if(isChecked){
-//                    Toast.makeText(Step2.this, cities[which], Toast.LENGTH_SHORT).show();
-//                    list.add(cities[which]);
-//                }else{
-//                    Toast.makeText(Step2.this, "Delete " + cities[which], Toast.LENGTH_SHORT).show();
-//                    list.remove(cities[which]);
-//                }
-//            }
-//        });
-//
-//        int i = 0;
-//        builder.setPositiveButton("confirm", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                Toast.makeText(Step2.this, "Changes Saved", Toast.LENGTH_SHORT).show();
-//
-//                System.out.println("======================================================");
-//                for(String ele: list){
-//                    CheckBox checkBox = new CheckBox(context);
-//                    checkBox.setText(ele);
-//                    checkBox.setLeft(20);
-//                    checkBox.setChecked(true);
-//                    linearLayout1.addView(checkBox);
-//                }
-//                System.out.println("======================================================");
-//            }
-//        });
-//        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                Toast.makeText(Step2.this, "Changes Cancelled", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        AlertDialog alertDialog = builder.create();
-//        alertDialog.show();
-//    }
-
     public void next(View view){
         if(command.getStringExtra("digital_scroll").equals("0")&&
                 command.getStringExtra("transcript").equals("0")&&
                 command.getStringExtra("predict").equals("0")){
-            Toast.makeText(this, "No Commands Selected", Toast.LENGTH_LONG).show(); return;
+            Toast.makeText(Step2.this, R.string.toast2, Toast.LENGTH_LONG).show(); return;
         }
 
         sendToServer();

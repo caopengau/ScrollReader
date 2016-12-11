@@ -13,4 +13,6 @@
     <string name="checkbox2">Transcript Major Into</string>
     <string name="checkbox3">Predict Notes</string>
     <string name="buttonMore">More</string>
+    <string name="toast1">Invalid Input Scroll</string>
+    <string name="toast2">Please select at least 1 command</string>
 </resources>

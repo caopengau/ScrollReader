@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">读普器</string>
+    <string name="Step1">步骤 1: 选取一张图片</string>
+    <string name="Step2">步骤 2: 选择任务</string>
+    <string name="Step3">步骤 3: 结果</string>
+    <string name="button1">选取一张图片</string>
+    <string name="button2">拍摄一张图片</string>
+    <string name="button3_0">清除</string>
+    <string name="button3_1">返回</string>
+    <string name="button4_0">上传</string>
+    <string name="button4_1">下一步</string>
+    <string name="checkbox1">生成电子谱</string>
+    <string name="checkbox2">转换音调</string>
+    <string name="checkbox3">音符预期</string>
+    <string name="buttonMore">更多</string>
+    <string name="toast1">输入图谱非法</string>
+    <string name="toast2">请选择至少一个命令</string>
+</resources>

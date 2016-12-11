@@ -91,10 +91,6 @@ public class Step1 extends AppCompatActivity {
             FileOutputStream outputStream;
             createPhotoName();
             File myCaptureFile = new File(SAVE_PIC_PATH, filename);
-
-            if (!myCaptureFile.exists()) {
-                myCaptureFile.createNewFile();
-            }
             outputStream = new FileOutputStream(myCaptureFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);//把图片数据写入文件
             outputStream.flush(); outputStream.close();
@@ -116,7 +112,7 @@ public class Step1 extends AppCompatActivity {
 
     public void next(View view){
         if (imageView.getDrawable().getConstantState().equals(getDrawable(R.mipmap.ic_launcher).getConstantState())){
-            Toast.makeText(this, "Invalid Input Scroll", Toast.LENGTH_LONG).show(); return;
+            Toast.makeText(this, R.string.toast1, Toast.LENGTH_LONG).show(); return;
         }
 
         sendToServer();

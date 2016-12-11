@@ -7,14 +7,15 @@ import android.view.View;
 import android.widget.TextView;
 
 public class Step3 extends AppCompatActivity {
-    Intent intent = getIntent();
-    TextView textView = (TextView)findViewById(R.id.textView1);
-    String string = "Commands:\n";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.step3);
+
+        Intent intent = getIntent();
+        TextView textView = (TextView)findViewById(R.id.textView1);
+        String string = "Commands:\n";
 
         if(intent.getStringExtra("digital_scroll").equals("1"))
             string += "digital_scroll: "+ intent.getStringExtra("digital_scroll") + "\n";
@@ -22,6 +23,7 @@ public class Step3 extends AppCompatActivity {
             string += "transcript into: " + intent.getStringExtra("transcript") + intent.getStringExtra("sharp_flat") + "\n";
         if(intent.getStringExtra("predict").equals("1"))
             string += "predict: " + intent.getStringExtra("predict");
+
         textView.setText(string);
 
         presentResult();
