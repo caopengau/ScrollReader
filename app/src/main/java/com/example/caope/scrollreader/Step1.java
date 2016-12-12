@@ -4,18 +4,28 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,12 +37,20 @@ public class Step1 extends AppCompatActivity {
     private  String SAVE_PIC_PATH  = Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/mnt/sdcard";
     private static final int CAMERA_REQUEST = 1888;
     private static final int GALLERY_REQUEST = 1889;
+    private static final String SERVER_ADDRESS = "192.168.0.102";
+    private static final int SERVER_PORT = 2020;
+    private Socket socket;
+    Thread ClientThread = null;
+    private boolean isRunning = false;
+    private Bitmap bitmap = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.step1);
         setTitle(R.string.Step1);
+
         imageView = (ImageView)findViewById(R.id.imageView1);
     }
 
@@ -50,7 +68,6 @@ public class Step1 extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data==null||resultCode==RESULT_CANCELED) return;
-        Bitmap bitmap = null;
         if(requestCode==GALLERY_REQUEST){
             bitmap = data.getParcelableExtra("data");
             if(bitmap==null){
@@ -85,20 +102,16 @@ public class Step1 extends AppCompatActivity {
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         filename = format.format(date)+".jpg";
-
     }
 
     public void saveToLocal(Bitmap bitmap) throws IOException {
-        File file = new File(SAVE_PIC_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
         createPhotoName();
         File myCaptureFile = new File(SAVE_PIC_PATH, filename);
+
         FileOutputStream outputStream = new FileOutputStream(myCaptureFile);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);//把图片数据写入文件
         outputStream.flush(); outputStream.close();
+
         refreshGallery(myCaptureFile);
     }
 
@@ -111,14 +124,49 @@ public class Step1 extends AppCompatActivity {
             Toast.makeText(this, R.string.toast1, Toast.LENGTH_LONG).show(); return;
         }
 
-        sendToServer();
-
         Intent intent = new Intent();
         intent.putExtra("filename", SAVE_PIC_PATH + "/" + filename);
         intent.setClass(this, Step2.class);
+
+        isRunning = true;
+        this.ClientThread = new Thread(new ClientThread());
+        this.ClientThread.start();
+
         this.startActivityForResult(intent, 1);
     }
 
-    private void sendToServer(){
+    public String GetIpAddress() {
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int i = wifiInfo.getIpAddress();
+        return (i & 0xFF) + "." +
+                ((i >> 8 ) & 0xFF) + "." +
+                ((i >> 16 ) & 0xFF)+ "." +
+                ((i >> 24 ) & 0xFF );
+    }
+
+    public static byte[] Bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos =new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        //这个函数能够设定图片的宽度与高度
+        //Bitmap map = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
+        return baos.toByteArray();
+    }
+
+    public class ClientThread implements Runnable{
+        public void run(){
+            try{
+                InetAddress serverAddress = InetAddress.getByName(SERVER_ADDRESS);
+                socket = new Socket(serverAddress,SERVER_PORT);
+
+                byte[] imageByte = Bitmap2Bytes(bitmap);
+                OutputStream outputStream = socket.getOutputStream();
+                outputStream.write(imageByte);
+                outputStream.flush(); outputStream.close(); socket.close();
+
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -15,4 +15,5 @@
     <string name="buttonMore">More</string>
     <string name="toast1">Invalid Input Scroll</string>
     <string name="toast2">Please select at least 1 command</string>
+    <string name="imageDescription">Replace With Your Scroll Image!</string>
 </resources>

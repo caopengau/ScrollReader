@@ -16,4 +16,5 @@
     <string name="buttonMore">更多</string>
     <string name="toast1">输入图谱非法</string>
     <string name="toast2">请选择至少一个命令</string>
+    <string name="imageDescription">选取你的乐谱图片！</string>
 </resources>
