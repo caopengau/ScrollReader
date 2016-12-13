@@ -28,15 +28,18 @@ import java.util.Date;
 import static com.example.caope.scrollreader.R.mipmap.ic_launcher;
 
 public class Step1 extends AppCompatActivity {
-    private String filename;
-    private ImageView imageView;
     private  String SAVE_PIC_PATH  = Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/mnt/sdcard";
     private static final int CAMERA_REQUEST = 1888;
     private static final int GALLERY_REQUEST = 1889;
+    /**************************************************************************************/
     private static final String SERVER_ADDRESS = "192.168.0.102";
     private static final int SERVER_PORT = 2020;
+    private boolean IS_CONNECTED = false;   // set to true when not testing file transfer
+    /**************************************************************************************/
+    private String filename;
+    private ImageView imageView;
     private Socket socket;
-    Thread ClientThread = null;
+    private Thread ClientThread = null;
     private boolean isRunning = false;
     private Bitmap bitmap = null;
 
@@ -46,7 +49,6 @@ public class Step1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.step1);
         setTitle(R.string.Step1);
-
         imageView = (ImageView)findViewById(R.id.imageView1);
     }
 
@@ -68,9 +70,7 @@ public class Step1 extends AppCompatActivity {
             bitmap = data.getParcelableExtra("data");
             if(bitmap==null){
                 try {
-                    //通过URI得到输入流
                     InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                    //通过输入流得到bitmap对象
                     bitmap = BitmapFactory.decodeStream(inputStream);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -128,7 +128,8 @@ public class Step1 extends AppCompatActivity {
         this.ClientThread = new Thread(new ClientThread());
         this.ClientThread.start();
 
-        this.startActivityForResult(intent, 1);
+        if(IS_CONNECTED) this.startActivityForResult(intent, 1);
+        else Toast.makeText(Step1.this, "Failed to connect to server", Toast.LENGTH_LONG).show();
     }
 
     public String GetIpAddress() {
@@ -142,11 +143,11 @@ public class Step1 extends AppCompatActivity {
     }
 
     public static byte[] Bitmap2Bytes(Bitmap bm) {
-        ByteArrayOutputStream baos =new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        //这个函数能够设定图片的宽度与高度
-        //Bitmap map = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
-        return baos.toByteArray();
+        ByteArrayOutputStream bos =new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        // customize height and width of the image
+        // Bitmap map = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
+        return bos.toByteArray();
     }
 
     public class ClientThread implements Runnable{
@@ -159,7 +160,7 @@ public class Step1 extends AppCompatActivity {
                 OutputStream outputStream = socket.getOutputStream();
                 outputStream.write(imageByte);
                 outputStream.flush(); outputStream.close(); socket.close();
-
+                IS_CONNECTED = true;
             }catch(IOException e) {
                 e.printStackTrace();
             }
